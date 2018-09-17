@@ -21,7 +21,7 @@ class BarChartTests: FBSnapshotTestCase
             99, 14, 84, 48, 40, 71, 106, 41, 45, 61]
         
         let entries = zip(values.indices, values).map {
-            BarChartDataEntry(x: Double($0.1), y: $0.2, icon: UIImage(named: "icon", in: Bundle(for: self.classForCoder), compatibleWith: nil))
+            BarChartDataEntry(x: Double($0.0), y: $0.1, icon: UIImage(named: "icon", in: Bundle(for: self.classForCoder), compatibleWith: nil))
         }
 
         dataSet = BarChartDataSet(values: entries, label: "Bar chart unit test data")
