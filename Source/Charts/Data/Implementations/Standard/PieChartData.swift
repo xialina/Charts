@@ -116,15 +116,12 @@ open class PieChartData: ChartData
     /// - returns: The total y-value sum across all DataSet objects the this object represents.
     @objc open var yValueSum: Double
     {
-        guard let dataSet = dataSet else { return 0.0 }
-        
-        var yValueSum: Double = 0.0
-        
-        for i in 0..<dataSet.entryCount
-        {
-            yValueSum += dataSet.entryForIndex(i)?.y ?? 0.0
+        guard let dataSet = dataSet else {
+            return 0.0
         }
-        
-        return yValueSum
+
+        return (0..<dataSet.entryCount).reduce(into: 0) {
+            $0 += dataSet.entryForIndex($1)?.y ?? 0.0
+        }
     }
 }

@@ -50,7 +50,8 @@ open class BubbleChartRenderer: BarLineScatterCandleBubbleRenderer
             accessibleChartElements.append(element)
         }
 
-        for (i, set) in (bubbleData.dataSets as! [IBubbleChartDataSet]).enumerated() where set.isVisible
+        let sets = bubbleData.dataSets as! [IBubbleChartDataSet]
+        for (i, set) in zip(sets.indices, sets) where set.isVisible
         {
             drawDataSet(context: context, dataSet: set, dataSetIndex: i)
         }

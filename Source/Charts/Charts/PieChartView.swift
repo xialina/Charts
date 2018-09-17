@@ -228,22 +228,10 @@ open class PieChartView: PieRadarChartViewBase
     /// Checks if the given index is set to be highlighted.
     @objc open func needsHighlight(index: Int) -> Bool
     {
-        // no highlight
-        if !valuesToHighlight()
-        {
-            return false
+        // check if the xvalue for the given dataset needs highlight
+        return _indicesToHighlight.contains {
+            Int($0.x) == index
         }
-        
-        for i in 0 ..< _indicesToHighlight.count
-        {
-            // check if the xvalue for the given dataset needs highlight
-            if Int(_indicesToHighlight[i].x) == index
-            {
-                return true
-            }
-        }
-        
-        return false
     }
     
     /// calculates the needed angle for a given value
@@ -268,31 +256,19 @@ open class PieChartView: PieRadarChartViewBase
     {
         // take the current angle of the chart into consideration
         let a = (angle - self.rotationAngle).normalizedAngle
-        for i in 0 ..< _absoluteAngles.count
-        {
-            if _absoluteAngles[i] > a
-            {
-                return i
-            }
-        }
-        
-        return -1 // return -1 if no index found
+        return absoluteAngles.firstIndex {
+            $0 > a
+        } ?? -1 // return -1 if no index found
     }
     
     /// - returns: The index of the DataSet this x-index belongs to.
     @objc open func dataSetIndexForIndex(_ xValue: Double) -> Int
     {
-        var dataSets = _data?.dataSets ?? []
-        
-        for i in 0 ..< dataSets.count
-        {
-            if (dataSets[i].entryForXValue(xValue, closestToY: Double.nan) !== nil)
-            {
-                return i
-            }
-        }
-        
-        return -1
+        return _data?
+            .dataSets
+            .firstIndex {
+                $0.entryForXValue(xValue, closestToY: .nan) != nil
+            } ?? -1
     }
     
     /// - returns: An integer array of all the different angles the chart slices

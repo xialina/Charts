@@ -40,25 +40,19 @@ open class HorizontalBarHighlighter: BarHighlighter
         xValue: Double,
         rounding: ChartDataSetRounding) -> [Highlight]
     {
-        var highlights = [Highlight]()
-        
-        guard let chart = self.chart as? BarLineScatterCandleBubbleChartDataProvider else { return highlights }
+        guard let chart = self.chart as? BarLineScatterCandleBubbleChartDataProvider else { return [] }
         
         var entries = set.entriesForXValue(xValue)
-        if entries.count == 0, let closest = set.entryForXValue(xValue, closestToY: .nan, rounding: rounding)
+        if entries.isEmpty, let closest = set.entryForXValue(xValue, closestToY: .nan, rounding: rounding)
         {
             // Try to find closest x-value and take all entries for that x-value
             entries = set.entriesForXValue(closest.x)
         }
-        
-        for e in entries
-        {
-            let px = chart.getTransformer(forAxis: set.axisDependency).pixelForValues(x: e.y, y: e.x)
-            
-            highlights.append(Highlight(x: e.x, y: e.y, xPx: px.x, yPx: px.y, dataSetIndex: dataSetIndex, axis: set.axisDependency))
+
+        return entries.map {
+            let px = chart.getTransformer(forAxis: set.axisDependency).pixelForValues(x: $0.y, y: $0.x)
+            return Highlight(x: $0.y, y: $0.x, xPx: px.x, yPx: px.y, dataSetIndex: dataSetIndex, axis: set.axisDependency)
         }
-        
-        return highlights
     }
     
     internal override func getDistance(x1: CGFloat, y1: CGFloat, x2: CGFloat, y2: CGFloat) -> CGFloat

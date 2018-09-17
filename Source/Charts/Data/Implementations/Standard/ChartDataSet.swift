@@ -375,15 +375,9 @@ open class ChartDataSet: ChartBaseDataSet
     /// - parameter e: the entry to search for
     open override func entryIndex(entry e: ChartDataEntry) -> Int
     {
-        for i in 0 ..< values.count
-        {
-            if values[i] === e
-            {
-                return i
-            }
-        }
-        
-        return -1
+        return values.firstIndex {
+            $0 === e
+        } ?? -1
     }
     
     /// Adds an Entry to the DataSet dynamically.
@@ -434,22 +428,16 @@ open class ChartDataSet: ChartBaseDataSet
     /// - returns: `true` if the entry was removed successfully, else if the entry does not exist
     open override func removeEntry(_ entry: ChartDataEntry) -> Bool
     {
-        var removed = false
         isIndirectValuesCall = true
 
-        for i in 0 ..< values.count
-        {
-            if values[i] === entry
-            {
-                values.remove(at: i)
-                removed = true
-                break
-            }
+        guard let i = values.firstIndex(where: { $0 === entry }) else {
+            return false
         }
 
+        values.remove(at: i)
         notifyDataSetChanged()
 
-        return removed
+        return true
     }
     
     /// Removes the first Entry (at index 0) of this DataSet from the entries array.
@@ -474,15 +462,9 @@ open class ChartDataSet: ChartBaseDataSet
     /// - returns: `true` if contains the entry, `false` if not.
     open override func contains(_ e: ChartDataEntry) -> Bool
     {
-        for entry in values
-        {
-            if entry == e
-            {
-                return true
-            }
+        return values.contains {
+            $0 == e
         }
-        
-        return false
     }
     
     /// Removes all values from this DataSet and recalculates min and max value.

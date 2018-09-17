@@ -96,7 +96,7 @@ open class ChartHighlighter : NSObject, IHighlighter
         xValue: Double,
         rounding: ChartDataSetRounding) -> [Highlight]
     {
-        var highlights = [Highlight]()
+        let highlights = [Highlight]()
         
         guard let chart = self.chart as? BarLineScatterCandleBubbleChartDataProvider else { return highlights }
         
@@ -106,16 +106,13 @@ open class ChartHighlighter : NSObject, IHighlighter
             // Try to find closest x-value and take all entries for that x-value
             entries = set.entriesForXValue(closest.x)
         }
-        
-        for e in entries
-        {
+
+        return entries.reduce(into: highlights) { highlights, e in
             let px = chart.getTransformer(forAxis: set.axisDependency).pixelForValues(x: e.x, y: e.y)
 
             let highlight = Highlight(x: e.x, y: e.y, xPx: px.x, yPx: px.y, dataSetIndex: dataSetIndex, axis: set.axisDependency)
             highlights.append(highlight)
         }
-        
-        return highlights
     }
 
     // - MARK: - Utilities
@@ -154,21 +151,13 @@ open class ChartHighlighter : NSObject, IHighlighter
         y: CGFloat,
         axis: YAxis.AxisDependency) -> CGFloat
     {
-        var distance = CGFloat.greatestFiniteMagnitude
-        
-        for high in closestValues
-        {
-            if high.axis == axis
-            {
-                let tempDistance = abs(getHighlightPos(high: high) - y)
-                if tempDistance < distance
-                {
-                    distance = tempDistance
-                }
-            }
+        return closestValues
+            .lazy
+            .filter { $0.axis == axis }
+            .reduce(CGFloat.greatestFiniteMagnitude) {
+                let tempDistance = abs(getHighlightPos(high: $1) - y)
+                return tempDistance < $0 ? tempDistance : $0
         }
-        
-        return distance
     }
     
     internal func getHighlightPos(high: Highlight) -> CGFloat

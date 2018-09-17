@@ -76,15 +76,10 @@ open class YAxisRendererRadarChart: YAxisRenderer
             // Ensure stops contains at least n elements.
             axis.entries.removeAll(keepingCapacity: true)
             axis.entries.reserveCapacity(labelCount)
-            
-            var v = yMin
-            
-            for _ in 0 ..< labelCount
-            {
-                axis.entries.append(v)
-                v += step
-            }
-            
+            axis.entries.append(contentsOf:
+                stride(from: yMin, to: Double(labelCount) * step, by: step)
+            )
+
             n = labelCount
         }
         else
@@ -102,10 +97,8 @@ open class YAxisRendererRadarChart: YAxisRenderer
             
             if interval != 0.0
             {
-                for _ in stride(from: first, through: last, by: interval)
-                {
-                    n += 1
-                }
+                n += stride(from: first, through: last, by: interval)
+                    .reduce(into: 0) { count, _ in count += 1 }
             }
             
             n += 1
@@ -147,15 +140,13 @@ open class YAxisRendererRadarChart: YAxisRenderer
             axis.centeredEntries.removeAll()
             
             let offset = (axis.entries[1] - axis.entries[0]) / 2.0
-            
-            for i in 0 ..< n
-            {
-                axis.centeredEntries.append(axis.entries[i] + offset)
-            }
+
+            axis.centeredEntries += axis.entries[..<n]
+                .map { $0 + offset}
         }
         
-        axis._axisMinimum = axis.entries[0]
-        axis._axisMaximum = axis.entries[n-1]
+        axis._axisMinimum = axis.entries.first!
+        axis._axisMaximum = axis.entries.last!
         axis.axisRange = abs(axis._axisMaximum - axis._axisMinimum)
     }
     

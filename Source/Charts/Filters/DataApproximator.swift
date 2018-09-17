@@ -38,16 +38,12 @@ open class DataApproximator: NSObject
                                 keep: &keep)
         
         // create a new array with series, only take the kept ones
-        var reducedEntries = [CGPoint]()
-        for i in 0 ..< points.count
-        {
-            if keep[i]
-            {
-                reducedEntries.append(points[i])
+        return zip(points,keep).reduce(into: []) {
+            let (point, keep) = $1
+            if keep {
+                $0.append(point)
             }
         }
-        
-        return reducedEntries
     }
 
     /// apply the Douglas-Peucker-Reduction to an array of `CGPoint`s with a given tolerance

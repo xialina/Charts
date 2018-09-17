@@ -303,17 +303,13 @@ open class XAxisRenderer: AxisRendererBase
         
         let valueToPixelMatrix = transformer.valueToPixelMatrix
         
-        var position = CGPoint(x: 0.0, y: 0.0)
-        
-        let entries = xAxis.entries
-        
-        for i in stride(from: 0, to: entries.count, by: 1)
-        {
-            position.x = CGFloat(entries[i])
-            position.y = position.x
-            position = position.applying(valueToPixelMatrix)
-            
-            drawGridLine(context: context, x: position.x, y: position.y)
+
+        xAxis.entries
+            .forEach {
+                let p = CGPoint(x: $0, y: $0)
+                    .applying(valueToPixelMatrix)
+
+                drawGridLine(context: context, x: p.x, y: p.y)
         }
     }
     
@@ -356,15 +352,8 @@ open class XAxisRenderer: AxisRendererBase
         
         var position = CGPoint(x: 0.0, y: 0.0)
         
-        for i in 0 ..< limitLines.count
-        {
-            let l = limitLines[i]
-            
-            if !l.isEnabled
-            {
-                continue
-            }
-            
+        for l in limitLines where l.isEnabled
+        {            
             context.saveGState()
             defer { context.restoreGState() }
             

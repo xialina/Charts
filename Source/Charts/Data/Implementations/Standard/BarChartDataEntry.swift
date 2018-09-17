@@ -232,16 +232,8 @@ open class BarChartDataEntry: ChartDataEntry
     /// - returns:
     private static func calcSum(values: [Double]?) -> Double
     {
-        guard let values = values
-            else { return 0.0 }
-        
-        var sum = 0.0
-        
-        for f in values
-        {
-            sum += f
-        }
-        
-        return sum
+        return values?.reduce(into: 0.0) {
+            $0 += $1
+        } ?? 0
     }
 }

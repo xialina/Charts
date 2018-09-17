@@ -319,10 +319,8 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
         // draw the bar shadow before the values
         if dataProvider.isDrawBarShadowEnabled
         {
-            for j in stride(from: 0, to: buffer.rects.count, by: 1)
+            for barRect in buffer.rects
             {
-                let barRect = buffer.rects[j]
-                
                 if (!viewPortHandler.isInBoundsLeft(barRect.origin.x + barRect.size.width))
                 {
                     continue
@@ -603,9 +601,8 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                             var posY = 0.0
                             var negY = -e.negativeSum
                             
-                            for k in 0 ..< vals.count
+                            for value in vals
                             {
-                                let value = vals[k]
                                 var y: Double
                                 
                                 if value == 0.0 && (posY == 0.0 || negY == 0.0)
@@ -629,11 +626,10 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                             
                             trans.pointValuesToPixel(&transformed)
                             
-                            for k in 0 ..< transformed.count
+                            for (val, transformed) in zip(vals, transformed)
                             {
-                                let val = vals[k]
                                 let drawBelow = (val == 0.0 && negY == 0.0 && posY > 0.0) || val < 0.0
-                                let y = transformed[k].y + (drawBelow ? negOffset : posOffset)
+                                let y = transformed.y + (drawBelow ? negOffset : posOffset)
                                 
                                 if !viewPortHandler.isInBoundsRight(x)
                                 {
@@ -650,7 +646,7 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
                                     drawValue(
                                         context: context,
                                         value: formatter.stringForValue(
-                                            vals[k],
+                                            val,
                                             entry: e,
                                             dataSetIndex: dataSetIndex,
                                             viewPortHandler: viewPortHandler),

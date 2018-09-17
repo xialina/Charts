@@ -698,27 +698,18 @@ open class PieRadarChartViewBase: ChartViewBase
             return 0.0
         }
         
-        var firstSample = _velocitySamples[0]
-        var lastSample = _velocitySamples[_velocitySamples.count - 1]
+        var firstSample = _velocitySamples.first!
+        var lastSample = _velocitySamples.last!
         
-        // Look for a sample that's closest to the latest sample, but not the same, so we can deduce the direction
-        var beforeLastSample = firstSample
-        for i in stride(from: (_velocitySamples.count - 1), through: 0, by: -1)
-        {
-            beforeLastSample = _velocitySamples[i]
-            if beforeLastSample.angle != lastSample.angle
-            {
-                break
-            }
-        }
-        
+        // Look for a sample that's closest to the last sample, but not the same, so we can deduce the direction
+        let beforeLastSample = _velocitySamples.reversed()
+            .last {
+                $0.angle == lastSample.angle
+        } ?? firstSample
+
         // Calculate the sampling time
-        var timeDelta = lastSample.time - firstSample.time
-        if timeDelta == 0.0
-        {
-            timeDelta = 0.1
-        }
-        
+        let timeDelta = CGFloat(max(lastSample.time - firstSample.time, 0.1))
+
         // Calculate clockwise/ccw by choosing two values that should be closest to each other,
         // so if the angles are two far from each other we know they are inverted "for sure"
         var clockwise = lastSample.angle >= beforeLastSample.angle
@@ -738,7 +729,7 @@ open class PieRadarChartViewBase: ChartViewBase
         }
         
         // The velocity
-        var velocity = abs((lastSample.angle - firstSample.angle) / CGFloat(timeDelta))
+        var velocity = abs((lastSample.angle - firstSample.angle) / timeDelta)
         
         // Direction?
         if !clockwise

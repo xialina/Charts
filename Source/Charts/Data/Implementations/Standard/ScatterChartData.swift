@@ -27,22 +27,12 @@ open class ScatterChartData: BarLineScatterCandleBubbleChartData
     /// - returns: The maximum shape-size across all DataSets.
     @objc open func getGreatestShapeSize() -> CGFloat
     {
-        var max = CGFloat(0.0)
-        
-        for set in _dataSets
-        {
-            let scatterDataSet = set as? IScatterChartDataSet
-            
-            if scatterDataSet == nil
-            {
-                print("ScatterChartData: Found a DataSet which is not a ScatterChartDataSet", terminator: "\n")
-            }
-            else if let size = scatterDataSet?.scatterShapeSize, size > max
-            {
-                max = size
-            }
+        let sets = _dataSets as? [IScatterChartDataSet]
+        assert(sets != nil, "ScatterChartData: Found a DataSet which is not a ScatterChartDataSet")
+
+        let max = sets?.max {
+            $0.scatterShapeSize < $1.scatterShapeSize
         }
-        
-        return max
+        return max?.scatterShapeSize ?? 0
     }
 }

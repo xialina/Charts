@@ -37,20 +37,12 @@ open class LineChartRenderer: LineRadarRenderer
     open override func drawData(context: CGContext)
     {
         guard let lineData = dataProvider?.lineData else { return }
-        
-        for i in 0 ..< lineData.dataSetCount
+
+        let sets = lineData.dataSets as? [ILineChartDataSet]
+        assert(sets != nil, "Datasets for LineChartRenderer must conform to ILineChartDataSet")
+        for set in sets! where set.isVisible
         {
-            guard let set = lineData.getDataSetByIndex(i) else { continue }
-            
-            if set.isVisible
-            {
-                if !(set is ILineChartDataSet)
-                {
-                    fatalError("Datasets for LineChartRenderer must conform to ILineChartDataSet")
-                }
-                
-                drawDataSet(context: context, dataSet: set as! ILineChartDataSet)
-            }
+            drawDataSet(context: context, dataSet: set)
         }
     }
     
@@ -356,11 +348,8 @@ open class LineChartRenderer: LineRadarRenderer
                     _lineSegments[1] = _lineSegments[0]
                 }
 
-                for i in 0..<_lineSegments.count
-                {
-                    _lineSegments[i] = _lineSegments[i].applying(valueToPixelMatrix)
-                }
-                
+                _lineSegments = _lineSegments.map { $0.applying(valueToPixelMatrix) }
+
                 if (!viewPortHandler.isInBoundsRight(_lineSegments[0].x))
                 {
                     break

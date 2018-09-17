@@ -97,18 +97,8 @@ open class BarHighlighter: ChartHighlighter
     {
         guard let ranges = ranges else { return 0 }
 
-        var stackIndex = 0
-        
-        for range in ranges
-        {
-            if range.contains(value)
-            {
-                return stackIndex
-            }
-            else
-            {
-                stackIndex += 1
-            }
+        if let stackIndex = ranges.firstIndex(where: { $0.contains(value) }) {
+            return stackIndex
         }
         
         let length = max(ranges.count - 1, 0)

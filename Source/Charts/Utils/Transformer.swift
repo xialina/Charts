@@ -69,9 +69,8 @@ open class Transformer: NSObject
     open func pointValuesToPixel(_ points: inout [CGPoint])
     {
         let trans = valueToPixelMatrix
-        for i in 0 ..< points.count
-        {
-            points[i] = points[i].applying(trans)
+        points = points.map {
+            $0.applying(trans)
         }
     }
     
@@ -126,10 +125,8 @@ open class Transformer: NSObject
     open func rectValuesToPixel(_ rects: inout [CGRect])
     {
         let trans = valueToPixelMatrix
-        
-        for i in 0 ..< rects.count
-        {
-            rects[i] = rects[i].applying(trans)
+        rects = rects.map {
+            $0.applying(trans)
         }
     }
     
@@ -137,10 +134,8 @@ open class Transformer: NSObject
     open func pixelsToValues(_ pixels: inout [CGPoint])
     {
         let trans = pixelToValueMatrix
-        
-        for i in 0 ..< pixels.count
-        {
-            pixels[i] = pixels[i].applying(trans)
+        pixels = pixels.map {
+            $0.applying(trans)
         }
     }
     

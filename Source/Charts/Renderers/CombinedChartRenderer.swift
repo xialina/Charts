@@ -51,35 +51,30 @@ open class CombinedChartRenderer: DataRenderer
                 {
                     _renderers.append(BarChartRenderer(dataProvider: chart, animator: animator, viewPortHandler: viewPortHandler))
                 }
-                break
-                
+
             case .line:
                 if chart.lineData !== nil
                 {
                     _renderers.append(LineChartRenderer(dataProvider: chart, animator: animator, viewPortHandler: viewPortHandler))
                 }
-                break
-                
+
             case .candle:
                 if chart.candleData !== nil
                 {
                     _renderers.append(CandleStickChartRenderer(dataProvider: chart, animator: animator, viewPortHandler: viewPortHandler))
                 }
-                break
-                
+
             case .scatter:
                 if chart.scatterData !== nil
                 {
                     _renderers.append(ScatterChartRenderer(dataProvider: chart, animator: animator, viewPortHandler: viewPortHandler))
                 }
-                break
-                
+
             case .bubble:
                 if chart.bubbleData !== nil
                 {
                     _renderers.append(BubbleChartRenderer(dataProvider: chart, animator: animator, viewPortHandler: viewPortHandler))
                 }
-                break
             }
         }
 
@@ -87,10 +82,7 @@ open class CombinedChartRenderer: DataRenderer
     
     open override func initBuffers()
     {
-        for renderer in _renderers
-        {
-            renderer.initBuffers()
-        }
+        _renderers.forEach { $0.initBuffers() }
     }
     
     open override func drawData(context: CGContext)
@@ -111,26 +103,17 @@ open class CombinedChartRenderer: DataRenderer
         // TODO: Due to the potential complexity of data presented in Combined charts, a more usable way
         // for VO accessibility would be to use axis based traversal rather than by dataset.
         // Hence, accessibleChartElements is not populated below. (Individual renderers guard against dataSource being their respective views)
-        for renderer in _renderers
-        {
-            renderer.drawData(context: context)
-        }
+        _renderers.forEach { $0.drawData(context: context) }
     }
     
     open override func drawValues(context: CGContext)
     {
-        for renderer in _renderers
-        {
-            renderer.drawValues(context: context)
-        }
+        _renderers.forEach { $0.drawValues(context: context) }
     }
     
     open override func drawExtras(context: CGContext)
     {
-        for renderer in _renderers
-        {
-            renderer.drawExtras(context: context)
-        }
+        _renderers.forEach { $0.drawExtras(context: context) }
     }
     
     open override func drawHighlighted(context: CGContext, indices: [Highlight])
@@ -171,14 +154,12 @@ open class CombinedChartRenderer: DataRenderer
     /// - returns: The sub-renderer object at the specified index.
     @objc open func getSubRenderer(index: Int) -> DataRenderer?
     {
-        if index >= _renderers.count || index < 0
+        guard _renderers.indices.contains(index) else
         {
             return nil
         }
-        else
-        {
-            return _renderers[index]
-        }
+
+        return _renderers[index]
     }
 
     /// - returns: All sub-renderers.

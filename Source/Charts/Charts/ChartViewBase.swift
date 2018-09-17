@@ -207,11 +207,9 @@ open class ChartViewBase: NSUIView, ChartDataProvider, AnimatorDelegate
             
             // calculate how many digits are needed
             setupDefaultFormatter(min: _data.getYMin(), max: _data.getYMax())
-            
-            for set in _data.dataSets
-            {
-                if set.needsFormatter || set.valueFormatter === _defaultValueFormatter
-                {
+
+            _data.dataSets.forEach { (set) in
+                if set.needsFormatter || set.valueFormatter === _defaultValueFormatter {
                     set.valueFormatter = _defaultValueFormatter
                 }
             }

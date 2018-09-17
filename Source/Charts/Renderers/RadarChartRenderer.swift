@@ -26,9 +26,8 @@ open class RadarChartRenderer: LineRadarRenderer
         guard let formatter = chart.xAxis.valueFormatter else { return [] }
 
         let maxEntryCount = chart.data?.maxEntryCountSet?.entryCount ?? 0
-        for i in stride(from: 0, to: maxEntryCount, by: 1)
-        {
-            labels.append(formatter.stringForValue(Double(i), axis: chart.xAxis))
+        stride(from: 0, to: maxEntryCount, by: 1).forEach {
+            labels.append(formatter.stringForValue(Double($0), axis: chart.xAxis))
         }
 
         return labels
@@ -64,12 +63,9 @@ open class RadarChartRenderer: LineRadarRenderer
                 self.accessibleChartElements.append(element)
             }
 
-            for set in radarData!.dataSets as! [IRadarChartDataSet]
+            for set in radarData!.dataSets as! [IRadarChartDataSet] where set.isVisible
             {
-                if set.isVisible
-                {
-                    drawDataSet(context: context, dataSet: set, mostEntries: mostEntries)
-                }
+                drawDataSet(context: context, dataSet: set, mostEntries: mostEntries)
             }
         }
     }

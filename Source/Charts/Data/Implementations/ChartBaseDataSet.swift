@@ -245,14 +245,9 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
     /// - parameter alpha: alpha to apply to the set `colors`
     @objc open func setColors(_ colors: [NSUIColor], alpha: CGFloat)
     {
-        var colorsWithAlpha = colors
-        
-        for i in 0 ..< colorsWithAlpha.count
-        {
-            colorsWithAlpha[i] = colorsWithAlpha[i] .withAlphaComponent(alpha)
+        self.colors = colors.map {
+            $0.withAlphaComponent(alpha)
         }
-        
-        self.colors = colorsWithAlpha
     }
     
     /// Sets colors with a specific alpha value.
@@ -398,15 +393,10 @@ open class ChartBaseDataSet: NSObject, IChartDataSet
     }
     
     open override var debugDescription: String
-    {
-        var desc = description + ":"
-        
-        for i in 0 ..< self.entryCount
-        {
-            desc += "\n" + (self.entryForIndex(i)?.description ?? "")
+    {        
+        return (0..<entryCount).reduce(into: description + ":") {
+            $0 += "\n" + (self.entryForIndex($1)?.description ?? "")
         }
-        
-        return desc
     }
     
     // MARK: - NSCopying

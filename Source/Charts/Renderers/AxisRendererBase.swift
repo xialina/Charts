@@ -159,10 +159,8 @@ open class AxisRendererBase: Renderer
             
             if interval != 0.0 && last != first
             {
-                for _ in stride(from: first, through: last, by: interval)
-                {
-                    n += 1
-                }
+                n += stride(from: first, through: last, by: interval)
+                    .reduce(into: 0) { count, _ in count += 1 }
             }
             else if last == first && n == 0
             {

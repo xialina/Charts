@@ -186,9 +186,8 @@ open class YAxisRenderer: AxisRendererBase
             }
             
             // draw the grid
-            for i in 0 ..< positions.count
-            {
-                drawGridLine(context: context, position: positions[i])
+            positions.forEach {
+                drawGridLine(context: context, position: $0)
             }
         }
 
@@ -223,16 +222,11 @@ open class YAxisRenderer: AxisRendererBase
         guard
             let yAxis = self.axis as? YAxis,
             let transformer = self.transformer
-            else { return [CGPoint]() }
-        
-        var positions = [CGPoint]()
-        positions.reserveCapacity(yAxis.entryCount)
-        
-        let entries = yAxis.entries
-        
-        for i in stride(from: 0, to: yAxis.entryCount, by: 1)
-        {
-            positions.append(CGPoint(x: 0.0, y: entries[i]))
+            else { return [] }
+
+        var positions = yAxis.entries
+            .map {
+                CGPoint(x: 0.0, y: $0)
         }
 
         transformer.pointValuesToPixel(&positions)

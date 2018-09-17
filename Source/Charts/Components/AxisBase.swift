@@ -128,18 +128,12 @@ open class AxisBase: ComponentBase
     
     @objc open func getLongestLabel() -> String
     {
-        var longest = ""
-        
-        for i in 0 ..< entries.count
-        {
-            let text = getFormattedLabel(i)
-            
-            if longest.count < text.count
-            {
-                longest = text
-            }
+        let longest = entries.indices
+            .reduce("") {
+                let text = getFormattedLabel($1)
+                return $0.count < text.count ? text : $0
         }
-        
+
         return longest
     }
     
@@ -261,13 +255,8 @@ open class AxisBase: ComponentBase
     /// Removes the specified ChartLimitLine from the axis.
     @objc open func removeLimitLine(_ line: ChartLimitLine)
     {
-        for i in 0 ..< _limitLines.count
-        {
-            if _limitLines[i] === line
-            {
-                _limitLines.remove(at: i)
-                return
-            }
+        if let index = _limitLines.firstIndex(where: { $0 === line }) {
+            _limitLines.remove(at: index)
         }
     }
     

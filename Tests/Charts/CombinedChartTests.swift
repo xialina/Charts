@@ -39,11 +39,8 @@ class CombinedChartTests: FBSnapshotTestCase
                                 76, 25, 20, 13, 52, 44, 57, 23, 45, 91,
                                 99, 14, 84, 48, 40, 71, 106, 41, 45, 61]
 
-        var entries: [ChartDataEntry] = Array()
-
-        for (i, value) in values.enumerated()
-        {
-            entries.append(BarChartDataEntry(x: Double(i), y: value, icon: UIImage(named: "icon", in: Bundle(for: self.classForCoder), compatibleWith: nil)))
+        let entries = zip(values.indices, values).map {
+            BarChartDataEntry(x: Double($0.0), y: $0.1, icon: UIImage(named: "icon", in: Bundle(for: self.classForCoder), compatibleWith: nil))
         }
 
         barDataSet = BarChartDataSet(values: entries, label: "Bar chart unit test data")
